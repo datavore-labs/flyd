@@ -39,7 +39,7 @@ s.toString()
 s.of
 s.ap
 s.map
-s.chain
+// does not implement s.chain
 ```
 
 @todo: API with errors in mind
