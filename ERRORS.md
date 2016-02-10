@@ -42,4 +42,4 @@ s.map
 s.chain
 ```
 
-@todo: API with events in mind
+@todo: API with errors in mind
