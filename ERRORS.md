@@ -42,4 +42,30 @@ s.map
 // does not implement s.chain
 ```
 
-@todo: API with errors in mind
+## Error API
+### Container type
+Add a container type for events (like an `Either` or `Validation`) so `Either = Left Error | Right val`.
+
+### Existing function changes
+```
+// Map only the values of a stream to either values or errors.
+flyd.map( (value) => value|error )
+
+// Callback for only the values of a stream.
+flyd.on( (*) => * )
+
+// Combine streams into a dependent stream based only on the values from the streams being depended on.
+flyd.combine( (v1, v2) => value|error, [s1, s2] )
+
+// Merge both values and errors from two streams into one.
+flyd.merge(s1, s2)
+```
+
+### New functions
+```
+// Map only the errors of a stream to an error or value.
+flyd.mapErrors( (error) => value|error )
+
+// Map events to any value, if they're events keep them, if they're values wrap them again.
+flyd.mapAll( (event) => value|error|event )
+```
