@@ -43,6 +43,20 @@ s.map
 ```
 
 ## Error API
+
+The core should support the following
++ Send a promise down the stream -> if it resolves a value event is created, if it rejects an error event
++ Send an Either down the stream -> if its a left and error event is created, if its a right a value event
++ Send a value down the stream directly it becomes a value event
++ Send an error down the steam it becomes a error event
++ Get the last event (error or value)
+
+The core combinators and access patterns should focus around values (the default case) and events the under the hood case
+This is the functionality I'm thinking
++ Get the last value
++ Define map, flatmap, chain, combine, and merge on streams so that dealing with the values is easy or getting at the underlying events is easy
++ Leave out error helpers as its the off case. Helpers can be added to modules for mapError and others
+
 ### Container type
 Add a container type for events (like an `Either` or `Validation`) so `Either = Left Error | Right val`.
 
