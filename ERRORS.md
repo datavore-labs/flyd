@@ -12,7 +12,7 @@ The goal of this is to determine how to bring functionality similar to that into
 
 ## Concepts
 + The stream is of `events`
-+ Each stream has a `left` and a `rigth` side
++ Each stream has a `left` and a `right` side
 + The right side is the domain objects
 + The left side is meta in our case errors
 + Keep the api by default operating on `right`
@@ -24,6 +24,7 @@ The goal of this is to determine how to bring functionality similar to that into
 + `s(value)` is the default case takes a value makes it a right and pushes it down the stream
 + `s(promise)` if the promise resolves pushes a right, otherwise pushes a left
 + `s(either)` pushes a right or left based on either.left either.right
++ *new `s.left(value)` sets the stream to a left of `value`
 
 ### Getting data
 + `s()` get the last right value or throws an exception if there is a left value
@@ -33,7 +34,7 @@ The goal of this is to determine how to bring functionality similar to that into
 ### Core functions
 + `.map()` works only on rights and ignores lefts
 + *new `.mapAll()` gets all events as an `Either` or some other lightweight type defining `lefts` and `rights`
-+ `.combine()` and `.merge()` stay the same they work on events
++ `.combine()` and `.merge()` stay the same they work on streams
 + `.scan()` needs more thought
 + `.on()` works on `rights` only
 
