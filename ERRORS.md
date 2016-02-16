@@ -21,13 +21,13 @@ The goal of this is to determine how to bring functionality similar to that into
 `s` is a stream
 
 ### Setting data s(...) is overloaded
-+ `s(value)` is the default case takes a value makes it a right and pushes it down the stream
++ `s(value)` alias to `s.right(value)` is the default case takes a value makes it a right and pushes it down the stream
 + `s(promise)` if the promise resolves pushes a right, otherwise pushes a left
-+ `s(either)` pushes a right or left based on either.left either.right
++ `s(either)` pushes a right or left based on either.left either.right (maybe an internal `isEither` function)
 + *new `s.left(value)` sets the stream to a left of `value`
 
 ### Getting data
-+ `s()` get the last right value or throws an exception if there is a left value
++ `s()` alias to `s.right()` get the last right value or throws an exception if there is a left value
 + *new `s.left()` get the last left value or throws an exception if there is a right value
 + *new `s.isRight()` and `s.isLeft()` return boolean so you know what the stream contains
 
