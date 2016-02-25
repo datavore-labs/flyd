@@ -819,6 +819,10 @@ describe('stream', function() {
       var s = stream(Either.Left(1));
       assert.throws(s.right, TypeError);
     });
+    it('can return a Right containing undefined', function() {
+      var s = stream(Either.Right(undefined));
+      assert.deepEqual(s.right(), Either.Right(undefined));
+    })
   });
 
   describe('left', function() {
@@ -830,6 +834,10 @@ describe('stream', function() {
       var s = stream(Either.Right(1));
       assert.throws(s.left, TypeError);
     });
+    it('can return a Left containing undefined', function() {
+      var s = stream(Either.Left(undefined));
+      assert.deepEqual(s.left(), Either.Left(undefined));
+    })
   });
 
   describe('isRight', function() {
