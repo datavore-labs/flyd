@@ -343,6 +343,15 @@ describe('stream', function() {
         }, 20);
       }));
     });
+    it('pushes promise.reject down the stream as and either.left', function(done) {
+      var s = stream();
+      combine(function(s) {
+        assert(s.isLeft(), true);
+        assert.equal(s.left(), 12);
+        done();
+      }, [s]);
+      s(Promise.reject(12));
+    });
   });
 
   describe('on', function() {
@@ -837,6 +846,11 @@ describe('stream', function() {
     it('can return a Left containing undefined', function() {
       var s = stream(Either.Left(undefined));
       assert.equal(s.left(), undefined);
+    })
+    it('can set a left value', function() {
+      var s = stream().left(0);
+      assert.throws(s, TypeError);
+      assert.equal(s.left(), 0);
     })
   });
 
