@@ -840,24 +840,11 @@ describe('stream', function() {
     it('can return a Left containing undefined', function() {
       var s = stream(Either.Left(undefined));
       assert.equal(s.left(), undefined);
-    })
+    });
     it('can set a left value', function() {
       var s = stream().left(0);
       assert.throws(s, TypeError);
       assert.equal(s.left(), 0);
-    })
-  });
-
-  describe('isRight', function() {
-    it('returns true if the value in the stream is a Right', function() {
-      var s = stream(Either.Right(0));
-      assert.equal(s.isRight(), true);
-      s(Either.Left(1));
-      assert.equal(s.isRight(), false);
-    });
-    it('returns true if the value in the stream is a plain value', function() {
-      var s = stream(0);
-      assert.equal(s.isRight(), true);
     });
   });
 
