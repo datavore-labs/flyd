@@ -816,21 +816,13 @@ describe('stream', function() {
   });
 
   describe('right', function() {
-    it('is an alias for s()', function() {
-      var s = stream(Either.Right(1));
-      assert.equal(s(), 1);
-      assert.equal(s.right(), 1);
-      s(2);
-      assert.equal(s(), 2);
-      assert.equal(s.right(), 2);
-    });
     it('throws if the current value in the stream is a Left', function() {
       var s = stream(Either.Left(1));
-      assert.throws(s.right, TypeError);
+      assert.throws(s, TypeError);
     });
     it('can return a Right containing undefined', function() {
       var s = stream(Either.Right(undefined));
-      assert.equal(s.right(), undefined);
+      assert.equal(s(), undefined);
     })
   });
 
