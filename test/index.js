@@ -358,7 +358,9 @@ describe('stream', function() {
     it('is invoked when stream changes', function() {
       var s = flyd.stream();
       var result = [];
-      var f = function(val) { result.push(val); };
+      var f = function(val) {
+        result.push(val);
+      };
       flyd.on(f, s);
       s(1)(2);
       assert.deepEqual(result, [1, 2]);
@@ -874,13 +876,17 @@ describe('stream', function() {
 
   describe('mapAll', function() {
     it('works on both Lefts and Rights', function() {
-      var result = []
-      var s = stream(Either.Right(1));
+      var result = [];
+      var a = Either.Right(1);
+      var s = stream(a);
       flyd.mapAll(function(v) {
-        result.push(s.isRight() ? v.right : v.left);
+        result.push(v);
       }, s);
-      s(Either.Right(2))(Either.Left(-1))(Either.Right(3));
-      assert.deepEqual(result, [1, 2, -1, 3]);
+      var b = Either.Right(2);
+      var c = Either.Left(-1);
+      var d = Either.Right(3);
+      s(b)(c)(d);
+      assert.deepEqual(result, [a, b, c, d]);
     });
   });
 });
