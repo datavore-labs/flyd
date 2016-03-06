@@ -358,7 +358,9 @@ describe('stream', function() {
     it('is invoked when stream changes', function() {
       var s = flyd.stream();
       var result = [];
-      var f = function(val) { result.push(val); };
+      var f = function(val) {
+        result.push(val);
+      };
       flyd.on(f, s);
       s(1)(2);
       assert.deepEqual(result, [1, 2]);
@@ -816,21 +818,13 @@ describe('stream', function() {
   });
 
   describe('right', function() {
-    it('is an alias for s()', function() {
-      var s = stream(Either.Right(1));
-      assert.equal(s(), 1);
-      assert.equal(s.right(), 1);
-      s(2);
-      assert.equal(s(), 2);
-      assert.equal(s.right(), 2);
-    });
     it('throws if the current value in the stream is a Left', function() {
       var s = stream(Either.Left(1));
-      assert.throws(s.right, TypeError);
+      assert.throws(s, TypeError);
     });
     it('can return a Right containing undefined', function() {
       var s = stream(Either.Right(undefined));
-      assert.equal(s.right(), undefined);
+      assert.equal(s(), undefined);
     })
   });
 
@@ -846,24 +840,11 @@ describe('stream', function() {
     it('can return a Left containing undefined', function() {
       var s = stream(Either.Left(undefined));
       assert.equal(s.left(), undefined);
-    })
+    });
     it('can set a left value', function() {
       var s = stream().left(0);
       assert.throws(s, TypeError);
       assert.equal(s.left(), 0);
-    })
-  });
-
-  describe('isRight', function() {
-    it('returns true if the value in the stream is a Right', function() {
-      var s = stream(Either.Right(0));
-      assert.equal(s.isRight(), true);
-      s(Either.Left(1));
-      assert.equal(s.isRight(), false);
-    });
-    it('returns true if the value in the stream is a plain value', function() {
-      var s = stream(0);
-      assert.equal(s.isRight(), true);
     });
   });
 
@@ -882,13 +863,17 @@ describe('stream', function() {
 
   describe('mapAll', function() {
     it('works on both Lefts and Rights', function() {
-      var result = []
-      var s = stream(Either.Right(1));
+      var result = [];
+      var a = Either.Right(1);
+      var s = stream(a);
       flyd.mapAll(function(v) {
-        result.push(s.isRight() ? v.right : v.left);
+        result.push(v);
       }, s);
-      s(Either.Right(2))(Either.Left(-1))(Either.Right(3));
-      assert.deepEqual(result, [1, 2, -1, 3]);
+      var b = Either.Right(2);
+      var c = Either.Left(-1);
+      var d = Either.Right(3);
+      s(b)(c)(d);
+      assert.deepEqual(result, [a, b, c, d]);
     });
   });
 });

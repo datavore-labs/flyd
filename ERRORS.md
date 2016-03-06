@@ -27,15 +27,16 @@ The goal of this is to determine how to bring functionality similar to that into
 + *new `s.left(value)` sets the stream to a left of `value`
 
 ### Getting data
-+ `s()` alias to `s.right()` get the last right value or throws an exception if there is a left value
++ `s()` get the last right value or throws an exception if there is a left value
 + *new `s.left()` get the last left value or throws an exception if there is a right value
-+ *new `s.isRight()` and `s.isLeft()` return boolean so you know what the stream contains
++ *new  `s.isLeft()` return boolean so you know what the stream contains
 
 ### Core functions
 + `.map()` works only on rights and ignores lefts
 + *new `.mapAll()` gets all events as an `Either` or some other lightweight type defining `lefts` and `rights`
 + `.combine()` and `.merge()` stay the same they work on streams
-+ `.scan()` needs more thought
++ `ap()` works on `rights` only
++ `.scan()` works on `rights` only
 + `.on()` works on `rights` only
 
 ### Move `.transduce()` to a module
