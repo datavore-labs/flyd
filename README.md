@@ -115,6 +115,22 @@ webSocket.onmessage = messages;
 Clicks events will now flow down the `clicks` stream and WebSockets messages
 down the `messages` stream.
 
+### Error Handling
+
+Flyd includes a small `Either` type for wrapping values and for error handling.
+An `Either.Right` is used for wrapping successful values while an `Either.Left`
+is used for error values. Some functions only work on the `Right` values in a
+stream.
+
+```javascript
+var numbers = flyd.stream(flyd.Either.Right(2));
+var squaredNumbers = flyd.map(function(n) { return n*n; }, numbers);
+squaredNumbers(); // 4
+numbers.left(-1);
+squaredNumbers(); // Still 4 because map only works on rights
+numbers.isLeft(); // true
+```
+
 ### Dependent streams
 
 Streams can depend on other streams. Use `var combined = flyd.combine(combineFn, [a, b, c, ...])`.
@@ -414,8 +430,9 @@ var double = flyd.endsOn(flyd.merge(n.end, killer), flyd.combine(function(n) {
 
 ###flyd.map(fn, s)
 
-Returns a new stream consisting of every value from `s` passed through `fn`. I.e. `map` creates
-a new stream that listens to `s` and applies `fn` to every new value.
+Returns a new stream consisting of Right and plain value from `s` passed through `fn`.
+I.e. `map` creates a new stream that listens to `s` and applies `fn` to every
+new Right or plain value.
 
 __Signature__
 
@@ -425,6 +442,33 @@ __Example__
 ```javascript
 var numbers = flyd.stream(0);
 var squaredNumbers = flyd.map(function(n) { return n*n; }, numbers);
+```
+
+## flyd.Either
+Used to create `Right` and `Left` data types to put into streams. These data
+types are wrappers around values. A `Right` value is meant to represent a
+successful value while a `Left` represents a failure.
+
+### Examples
+```js
+var s = flyd.stream(flyd.Either.Right(2));
+s.right() // 2
+```
+
+###flyd.mapAll(fn, s)
+
+Similar to `map` except `fn` is applied to all values, even Lefts
+
+__Signature__
+
+`(a -> result) -> Stream a -> Stream result`
+
+__Example__
+```javascript
+var numbers = flyd.stream(Either.Right(1));
+var filtered = flyd.mapAll(function(v) {
+  if (s.isRight()) return v.right;
+}, s);
 ```
 
 ###flyd.on(fn, s)
@@ -557,7 +601,7 @@ stream the parent stream ends.
 
 ###stream.map(f)
 
-Returns a new stream identical to the original except every
+Returns a new stream identical to the original except every plain or Right
 value will be passed through `f`.
 
 _Note:_ This function is included in order to support the fantasy land
@@ -574,12 +618,35 @@ var numbers = flyd.stream(0);
 var squaredNumbers = numbers.map(function(n) { return n*n; });
 ```
 
+## `stream.mapAll(f)`
+
+Similar to `stream.map` except all values, including Lefts, are passed through
+`f`.
+
+__Signature__
+
+Called bound to `Stream a`: `(a -> b) -> Stream b`
+
+### Parameters
+
+* `function` **`Function`** the function to apply
+
+
+### Examples
+
+```js
+var numbers = flyd.stream(Either.Right(1));
+var filtered = numbers.mapAll(function(v) { if (s.isRight()) return v.right; });
+```
+
+Returns `stream` a new stream with the values mapped
+
 ###stream1.ap(stream2)
 
 `stream1` must be a stream of functions.
 
-Returns a new stream which is the result of applying the
-functions from `stream1` to the values in `stream2`.
+Returns a new stream which is the result of applying the functions from
+`stream1` to the plain or Right values in `stream2`.
 
 _Note:_ This function is included in order to support the fantasy land
 specification.
@@ -596,6 +663,61 @@ var numbers1 = flyd.stream();
 var numbers2 = flyd.stream();
 var addToNumbers1 = flyd.map(add, numbers1);
 var added = addToNumbers1.ap(numbers2);
+```
+
+## `stream.isLeft()`
+
+Returns `true` if the last value in the stream is a Left value.
+
+__Signature__: Called bound to `Stream a`: `Boolean`
+
+### Examples
+```js
+var s = flyd.stream(1);
+s.isLeft(); // false
+s.left(2);
+s.isLeft(); // true
+```
+
+
+## `stream.isRight()`
+
+Returns `true` if the last value in the stream is a Right value or a plain
+value.
+
+__Signature__: Called bound to `Stream a`: `Boolean`
+
+### Examples
+```js
+var s = flyd.stream(1);
+s.isRight(); // true
+s(Either.Right(2));
+s.isRight(); // true
+s.left(-1);
+s.isRight(); // false
+```
+
+
+## `stream.left(val)`
+
+If an argument is applied, wraps a value in a Left and pushes it down the stream.
+
+__Signature__: Called bound to `Stream a`: `a -> Stream (Left a)`
+
+If no argument is applied, returns the last value of the stream if it is a left
+value. If it is not, an error is thrown.
+
+__Signature__: Called bound to `Stream a`: `a`
+
+### Examples
+```js
+var s = flyd.stream();
+s.left(1);
+s.left(); // 1
+s(Either.Left(2);
+s.left(); // 2
+s(3);
+s.left(); // TypeError
 ```
 
 ###stream.of(value)
@@ -692,7 +814,7 @@ several streams change at the same time.
 
 Flyd implements atomic updates with a _O(n)_ topological sort where _n_
 is number of streams that directly or indirectly depends on the updated
-stream. 
+stream.
 
 ### Environment support
 
@@ -711,8 +833,3 @@ npm test
 The `npm test` command run three tests: a eslint js style checker test, the test of the core library and the test of the modules. If you want to run only the test of the library `npm run test`.
 
 The API.md file is generated using `npm run docs` (it assumes it has documentation installed globally: `npm i -g documentation`)
-
-
-
-
-
